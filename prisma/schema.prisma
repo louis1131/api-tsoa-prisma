@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("SHADOW_DATABASE_URL")
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -16,10 +16,14 @@ model User {
   role Role @relation(fields: [role_id], references: [id])
   role_id Int
 
+  @@map("user")
+
 }
 
 model Role {
   id       Int  @id @default(autoincrement())
   name    String @unique
   users User[]
+
+  @@map("role")
 }

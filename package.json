@@ -10,6 +10,9 @@
     "dev": "nodemon --watch src --ignore src/routes.ts --ext ts,json --exec \"npx tsoa routes && ts-node src/server.ts\"",
     "swagger": "tsoa spec"
   },
+  "prisma": {
+    "seed": "yarn ts-node prisma/seed.ts"
+  },
   "dependencies": {
     "@prisma/client": "6.19.2",
     "argon2": "^0.44.0",
