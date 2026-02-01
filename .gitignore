@@ -6,3 +6,4 @@ dev.db
 /prisma/migrations/
 src/generated
 routes.ts
+src/swagger/swagger.json
