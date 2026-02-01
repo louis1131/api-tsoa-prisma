@@ -6,13 +6,14 @@ import { RegisterRoutes } from "./routes";
 const app = express();
 app.use(express.json());
 
-
+// Swagger is used to provide API documentation and interactive API testing
 app.use("/docs", swaggerUi.serve, async (_req: ExRequest, res: ExResponse) => {
   return res.send(
     swaggerUi.generateHTML(await import("./swagger/swagger.json"))
   );
 });
 
+// Register all generated routes on the Express application
 RegisterRoutes(app);
 
 app.use(function errorHandler(
@@ -30,7 +31,7 @@ app.use(function errorHandler(
   }
   if (err instanceof Error) {
     return res.status(500).json({
-      message: "Internal Server Error"
+      message: err.message
     })
   }
   next();
