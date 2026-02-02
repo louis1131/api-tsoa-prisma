@@ -1,5 +1,5 @@
-import { Controller, Request, Route, Get, Path, Post, Body, SuccessResponse, Security } from "tsoa";
 import * as express from "express";
+import { Controller, Get, Request, Route, Security } from "tsoa";
 
 @Route("private")
 @Security("bearer")

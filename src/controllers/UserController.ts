@@ -1,5 +1,5 @@
 import * as express from "express";
-import { Controller, Request, Route, Get, Path, Post, Body, SuccessResponse, Security, Patch, Delete } from "tsoa";
+import { Body, Controller, Delete, Get, Patch, Path, Request, Route, Security } from "tsoa";
 import { userResponseDTO, usersListDTO, userUpdateDTO } from "../dto/user";
 import { UserService, UserUpdateParams } from "../services/userService";
 
