@@ -1,8 +1,9 @@
 import * as express from "express";
-import * as jwt from "jsonwebtoken";
-import prisma from "./db";
+import jwt from "jsonwebtoken";
+import prisma from "../db";
 
-const SECRET = process.env.JWT_SECRET || "supersecret";
+const SECRET = process.env.JWT_SECRET || "secret";
+
 
 export async function expressAuthentication(
     request: express.Request,
@@ -30,8 +31,6 @@ export async function expressAuthentication(
         where: { id: decoded.user_id },
         include: { role: true },
     });
-
-    if (!user) return Promise.reject(new Error("User not found"));
 
     if (!user) return Promise.reject(new Error("User not found"));
 
