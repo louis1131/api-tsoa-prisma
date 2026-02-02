@@ -43,5 +43,6 @@ export type loginRequestDTO = {
 }
 
 export type loginResponseDTO = {
-    token: string;
+    token?: string;
+    message?: string;
 }

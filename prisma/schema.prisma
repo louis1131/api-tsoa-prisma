@@ -13,8 +13,9 @@ model User {
   firstname String
   lastname  String
   password  String
+  email_verification Boolean @default(false)
   role Role @relation(fields: [role_id], references: [id])
-  role_id Int
+  role_id Int @default(2)
 
   @@map("user")
 

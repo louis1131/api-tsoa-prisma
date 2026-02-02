@@ -32,6 +32,7 @@ async function seedAdmin() {
             email: "admin@example.com",
             firstname: "Admin",
             lastname: "Root",
+            email_verification: true,
             password: await argon2.hash("admin123"),
             role_id: adminRole.id,
         },
