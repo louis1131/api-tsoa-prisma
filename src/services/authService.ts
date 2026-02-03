@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 import { userDTO, loginRequestDTO, loginResponseDTO } from "../dto/user";
 import { rejectTempMail } from "../utils/emailChecker";
 import { EmailService } from "./emailService";
-import { EmailAlreadyUsedError } from "../errors/UserErrors";
+import { DisposableEmailError, EmailAlreadyUsedError } from "../errors/UserErrors";
 
 // Build a type with all proprieties specified.
 export type UserCreationParams = Pick<userDTO, "email" | "firstname" | "lastname" | "password" | "role">;
@@ -49,7 +49,7 @@ export class AuthService {
     // Returns a Promise resolving to a userDTO without the password field.
     public async create(params: UserCreationParams): Promise<Omit<userDTO, "password"> | string> {
         if (rejectTempMail(params.email)) {
-            return ("Disposable email addresses are not allowed");
+            throw new DisposableEmailError();
         }
         
         if (!params.password || typeof params.password !== "string") {

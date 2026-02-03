@@ -4,7 +4,7 @@ import { AuthService, LoginRequestParams, UserCreationParams } from "../services
 import { loginResponseDTO } from "../dto/user";
 import { EmailService } from "../services/emailService";
 import { HttpError } from "../errors/HttpErrors";
-import { EmailAlreadyUsedError } from "../errors/UserErrors";
+import { DisposableEmailError, EmailAlreadyUsedError } from "../errors/UserErrors";
 
 @Route("auth")
 export class AuthController extends Controller {
@@ -20,12 +20,16 @@ export class AuthController extends Controller {
     @Post("register")
     @Response<{ message: string }>(409, "Email already in use")
     @Response<{ message: string }>(422, "Validation failed")
+    @Response<{ message: string}>(422, "Disposable email addresses are not allowed")
     public async createUser(@Body() requestBody: UserCreationParams): Promise<void> {
         try {    
             await new AuthService().create(requestBody);
             return;   
-        } catch (err) {
+        } catch (err: any) {
             if (err instanceof EmailAlreadyUsedError) throw new HttpError(409, "Email already in use");
+            if (err instanceof DisposableEmailError) throw new HttpError(422, "Disposable email addresses are not allowed");
+            
+            throw new HttpError(500, err.message);
         }
     }
 
