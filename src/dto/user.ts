@@ -9,6 +9,7 @@ export type userDTO = {
     lastname: string;
     password: string;
     role?: string;
+    role_id?: number;
 }
 
 export type userResponseDTO = {
@@ -46,4 +47,10 @@ export type loginRequestDTO = {
 export type loginResponseDTO = {
     token?: string;
     message?: string;
+}
+
+export type userEmailVerificationDTO = {
+    id: number;
+    email: string;
+    firstname: string;
 }
