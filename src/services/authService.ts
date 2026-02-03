@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import { userDTO, loginRequestDTO, loginResponseDTO } from "../dto/user";
 import { rejectTempMail } from "../utils/emailChecker";
 import { EmailService } from "./emailService";
+import { EmailAlreadyUsedError } from "../errors/UserErrors";
 
 // Build a type with all proprieties specified.
 export type UserCreationParams = Pick<userDTO, "email" | "firstname" | "lastname" | "password" | "role">;
@@ -56,31 +57,40 @@ export class AuthService {
         }
 
         const hashedPassword = await argon2.hash(params.password);
-        const userRole = await prisma.role.findUnique({ where: { name: "user" } })
-        if (!userRole) throw new Error("Cannot create your account please retry later")
-        const user = await prisma.user.create({
-            data: {
-                email: params.email,
-                firstname: params.firstname,
-                lastname: params.lastname,
-                password: hashedPassword,
-                role_id: userRole.id
-            },
-            include: { role: true }
-        });
+        const userRole = await prisma.role.findUnique({ where: { name: "user" } });
+        if (!userRole) throw new Error("Cannot create your account please retry later");
 
         try {
-            await new EmailService().sendVerificationEmail(user);  
-        } catch (err) {
-            console.error("Failed to send verification email", err);
-        }
+            const user = await prisma.user.create({
+                data: {
+                    email: params.email,
+                    firstname: params.firstname,
+                    lastname: params.lastname,
+                    password: hashedPassword,
+                    role_id: userRole.id
+                },
+                include: { role: true }
+            });
 
-        return {
-            id: user.id,
-            email: user.email,
-            firstname: user.firstname,
-            lastname: user.lastname,
-            role: user.role.name
+            try {
+                await new EmailService().sendVerificationEmail(user);  
+            } catch (err) {
+                console.error("Failed to send verification email", err);
+            }
+
+            return {
+                id: user.id,
+                email: user.email,
+                firstname: user.firstname,
+                lastname: user.lastname,
+                role: user.role.name
+            };
+
+        } catch (err: any) {
+            if (err.code === "P2002") {
+                throw new EmailAlreadyUsedError();
+            }
+            throw err;
         }
     }
 }
