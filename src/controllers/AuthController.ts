@@ -3,6 +3,7 @@ import { Body, Controller, Post, Get, Request, Route, SuccessResponse, Response 
 import { AuthService, LoginRequestParams, UserCreationParams } from "../services/authService";
 import { loginResponseDTO } from "../dto/user";
 import { EmailService } from "../services/emailService";
+import { HttpError } from "../errors/HttpErrors";
 
 @Route("auth")
 export class AuthController extends Controller {
@@ -24,7 +25,7 @@ export class AuthController extends Controller {
         const token = request.query.token as string;
 
         if (!token) {
-            throw new Error ("Token is missing");
+            throw new HttpError (400, "Token is missing");
         }
 
         try {
