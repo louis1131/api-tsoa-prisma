@@ -15,10 +15,10 @@ export async function expressAuthentication(
     }
 
     let token = request.headers["authorization"] as string;
-    if (!token) return Promise.reject(new Error("No token provided"));
-    if (token.startsWith("Bearer ")) token = token.slice(7);
+    if (!token) return Promise.reject(new Error("No token provided")); // Require token
+    if (token.startsWith("Bearer ")) token = token.slice(7); // Remove 'Bearer ' prefix
 
-    // Check JWT
+    // Verify JWT
     let decoded: any;
     try {
         decoded = jwt.verify(token, SECRET);
@@ -35,9 +35,9 @@ export async function expressAuthentication(
     if (!user) return Promise.reject(new Error("User not found"));
 
     if(requiredRole && requiredRole.includes(user.role.name)) {
-        return user;
+        return user; // Authorized
     } else if  (!requiredRole || requiredRole.length === 0) {
-        return user;
+        return user; // No role restriction
     }
 
     return Promise.reject(new Error("Access denied"));

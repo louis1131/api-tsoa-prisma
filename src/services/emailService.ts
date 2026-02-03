@@ -2,19 +2,24 @@ import "dotenv/config";
 import { transporter } from "../utils/mailer";
 import jwt from "jsonwebtoken";
 import prisma from "../db";
-import { User } from "@prisma/client";
+import { userEmailVerificationDTO } from "../dto/user";
 
-const secret = process.env.JWT_SECRET_EMAIL;
-const url = process.env.EMAIL_VERIFICATION_URL;
+const secret = process.env.JWT_SECRET_EMAIL; // JWT secret used to sign email verification tokens
+const url = process.env.EMAIL_VERIFICATION_URL; // Base URL for email verification links
 
 export class EmailService {
-    public async sendVerificationEmail(user: User): Promise <void> {
+    // Sends a verification email to the given user.
+    // - Generate a JWT token containing the user ID, expires in 30 minutes.
+    // - Builds a verification URL using the token.
+    // - Uses Nodemailer transporter to send the email.
+    // - Throws an error if sending fails or secret is not defined.
+    public async sendVerificationEmail(user: userEmailVerificationDTO): Promise <void> {
         if (!secret) {
             throw new Error ("JWT_SECRET_EMAIL is not defined");
         }
 
         const token = jwt.sign({ user_id: user.id }, secret, {
-            expiresIn: "30m"
+            expiresIn: "30m" // Token expires in 30 minutes.
         });
 
         const verificationUrl = `${url}${token}`;
@@ -51,8 +56,13 @@ export class EmailService {
         }  
     }
 
+    // Verifies the email token sent to the user.
+    // - Decodes the JWT token to extract the user ID.
+    // - Throw an error if token is invalid, expired or secret is missing.
+    // - Marks the user's email as verified in the database if not already verified.
+    // - Returns a status message readable.
     public async verifyEmailToken(token: string): Promise<string> {
-        let decoded: { user_id: number };
+        let decoded: { user_id: number }; // JWT payload containing the user's ID.
 
         if (!secret) throw new Error ("JWT_SECRET_EMAIL is not defined");
 

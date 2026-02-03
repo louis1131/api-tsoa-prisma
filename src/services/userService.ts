@@ -1,6 +1,5 @@
-import { User } from "@prisma/client";
 import prisma from "../db";
-import { userResponseDTO, usersListDTO, userUpdateDTO } from "../dto/user";
+import { userDTO, userResponseDTO, usersListDTO, userUpdateDTO } from "../dto/user";
 
 // Build a type with all proprieties specified
 export type UserUpdateParams = Pick<userUpdateDTO, "firstname" | "lastname" | "role_id">;
@@ -48,8 +47,9 @@ export class UserService {
         }));
     }
 
-    // User updates, returns a promise or we exclude the password with "Omit"
-    public async updateOne(id: number, user: User, params: UserUpdateParams): Promise<Omit<userResponseDTO, "password">> {
+    // Updates a user by ID. Returns a Promise of the updated user DTO (password excluded).
+    // `Omit` is used to prevent exposing the password.
+    public async updateOne(id: number, user: userDTO, params: UserUpdateParams): Promise<Omit<userResponseDTO, "password">> {
         const updatedUser = await prisma.user.update({
             where: { id: id},
             data: {
@@ -73,8 +73,8 @@ export class UserService {
         }
     };
 
-    // Delete a user based on their ID, return a promise with a boolean object
-    public async deleteOne(id: number, user: User): Promise<{ account_deleted: boolean }> {
+    // Deletes a user by ID. Returns an object indicating if deletion succeeded.
+    public async deleteOne(id: number, user: userDTO): Promise<{ account_deleted: boolean }> {
         const deleteUser = await prisma.user.delete({
             where: { id: id}
         });
@@ -88,8 +88,9 @@ export class UserService {
         }
     }
 
-    // Retrieves information about the logged-in user
-    public async getMe(user: User): Promise<Omit<userResponseDTO, "password">> {
+    // Returns info about the currently logged-in user.
+    // Password is excluded from the returned DTO.
+    public async getMe(user: userDTO): Promise<Omit<userResponseDTO, "password">> {
         return {
             id: user.id,
             email: user.email,
@@ -98,9 +99,9 @@ export class UserService {
         };
     };
 
-    // Allows you to update the information for the currently logged-in user.
-    // Only firstname and lastname for the moment
-    public async updateMe(user: User, params: UserUpdateParams): Promise<Omit<userUpdateDTO, "password">> {
+    // Updates the currently logged-in user's firstname and lastname.
+    // Returns the updated user DTO (password excluded). Role ID is included.
+    public async updateMe(user: userDTO, params: UserUpdateParams): Promise<Omit<userUpdateDTO, "password">> {
         const updatedUser = await prisma.user.update({
             where: { id: user.id},
             data: {
@@ -119,6 +120,7 @@ export class UserService {
             email: updatedUser.email,
             firstname: updatedUser.firstname,
             lastname: updatedUser.lastname,
+            role_id: updatedUser.role.id
         }
     };
 }
