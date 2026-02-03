@@ -25,6 +25,7 @@ export type usersListDTO = {
     email: string;
     firstname: string;
     lastname: string;
+    email_verification: boolean;
     role: string;
     role_id: number;
 };

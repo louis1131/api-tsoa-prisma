@@ -2,6 +2,11 @@ import "dotenv/config";
 import prisma from "../src/db";
 import argon2 from "argon2";
 
+async function deleteAllUsers() {
+    await prisma.user.deleteMany({});
+    console.log("✅ All users delete");
+}
+
 async function seedRoles() {
     const roles = ["admin", "user"];
 
@@ -27,7 +32,13 @@ async function seedAdmin() {
 
     await prisma.user.upsert({
         where: { email: "admin@example.com" },
-        update: {},
+        update: {
+            firstname: "Admin",
+            lastname: "Root",
+            email_verification: true,
+            password: await argon2.hash("admin123"),
+            role_id: adminRole.id,
+        },
         create: {
             email: "admin@example.com",
             firstname: "Admin",
@@ -43,6 +54,7 @@ async function seedAdmin() {
 
 async function main() {
     console.log("🌱 Seeding database...");
+    await deleteAllUsers();
     await seedRoles();
     await seedAdmin();
     console.log("🎉 Seed finish");
