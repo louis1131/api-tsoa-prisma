@@ -3,8 +3,15 @@ REST API built with TypeScript, TSOA and Prisma, featuring JWT authentication an
 
 ## 📚 Documentation
 
+#### Setup
+
 - [English](#setup)
 - [French](#installation)
+
+#### Endpoints
+
+- [English](#endpoints-1)
+- [French](#endpoints-2)
 
 ## Setup 
 
@@ -101,6 +108,57 @@ After starting the API, you can access the interactive Swagger documentation at 
 
 - You can test queries directly from the interface.
 
+### Endpoints
+
+#### Authentication
+
+```
+POST | auth/register
+```
+
+```
+POST | auth/login
+```
+
+```
+GET | auth/verify-email
+```
+
+#### User management
+
+- Accessible only to administrators
+
+```
+GET | users
+```
+
+```
+GET | users/{userId}
+```
+
+```
+PATCH | users/{userId}
+```
+
+```
+DELETE | users/{userId}
+```
+
+- Accessible to all users
+
+```
+GET | users/me
+```
+
+```
+PATCH | users/me
+```
+
+#### Private
+
+```
+GET | private
+```
 
 # Installation
 
@@ -195,3 +253,56 @@ Après avoir démarré l'API, vous pouvez accéder à la documentation interacti
 ``http://localhost:3000/docs``
 
 - Vous pouvez tester les requêtes directement depuis l'interface.
+
+### Endpoints
+
+#### Authentificiation
+
+```
+POST | auth/register
+```
+
+```
+POST | auth/login
+```
+
+```
+GET | auth/verify-email
+```
+
+#### Gestion des utilisateurs
+
+- Accessible uniquement aux administrateurs
+
+```
+GET | users
+```
+
+```
+GET | users/{userId}
+```
+
+```
+PATCH | users/{userId}
+```
+
+```
+DELETE | users/{userId}
+```
+
+- Accessible à tous les utilisateurs
+
+```
+GET | users/me
+```
+
+```
+PATCH | users/me
+```
+
+#### Privée
+
+```
+GET | private
+```
+
