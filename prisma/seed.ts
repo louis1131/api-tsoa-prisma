@@ -52,11 +52,62 @@ async function seedAdmin() {
     console.log("✅ Admin seeded");
 }
 
+async function seedUsers() {
+    const userRole = await prisma.role.findUnique({
+        where: { name: "user" },
+    });
+
+    if (!userRole) {
+        throw new Error("Missing user role");
+    }
+
+    await prisma.user.upsert({
+        where: { email: "user@example.com" },
+        update: {
+            firstname: "User",
+            lastname: "Verified",
+            email_verification: true,
+            password: await argon2.hash("user123"),
+            role_id: userRole.id,
+        },
+        create: {
+            email: "user@example.com",
+            firstname: "User",
+            lastname: "Root",
+            email_verification: true,
+            password: await argon2.hash("user123"),
+            role_id: userRole.id,
+        },
+    });
+
+    await prisma.user.upsert({
+        where: { email: "usernotverify@example.com" },
+        update: {
+            firstname: "User",
+            lastname: "Not Verified",
+            email_verification: false,
+            password: await argon2.hash("user123"),
+            role_id: userRole.id,
+        },
+        create: {
+            email: "usernotverify@example.com",
+            firstname: "User",
+            lastname: "Not Verified",
+            email_verification: false,
+            password: await argon2.hash("user123"),
+            role_id: userRole.id,
+        },    
+    });
+
+    console.log("✅ Users seeded");
+}
+
 async function main() {
     console.log("🌱 Seeding database...");
     await deleteAllUsers();
     await seedRoles();
     await seedAdmin();
+    await seedUsers();
     console.log("🎉 Seed finish");
 }
 

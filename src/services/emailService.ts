@@ -1,8 +1,9 @@
 import "dotenv/config";
-import { transporter } from "../utils/mailer";
+// import { transporter } from "../utils/mailer";
 import jwt from "jsonwebtoken";
 import prisma from "../db";
 import { userEmailVerificationDTO } from "../dto/user";
+import { resend } from "../utils/mailer";
 
 const secret = process.env.JWT_SECRET_EMAIL; // JWT secret used to sign email verification tokens
 const url = process.env.EMAIL_VERIFICATION_URL; // Base URL for email verification links
@@ -25,8 +26,11 @@ export class EmailService {
         const verificationUrl = `${url}${token}`;
 
         try {
-            await transporter.sendMail({
-                from: process.env.GOOGLE_MAIL,
+            // first please check in utils/mailer.ts
+            // switch to transporter.sendMail if you want
+            // await transporter.sendMail
+            await resend.emails.send({
+                from: "onboarding@resend.dev",
                 to: user.email,
                 subject: "Verify your e-mail",
                 text: `Hello ${user.firstname || ""}, please verify your email address by clicking the link below : \n${verificationUrl}`,
