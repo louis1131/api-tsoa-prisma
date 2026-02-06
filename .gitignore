@@ -3,7 +3,6 @@ node_modules
 *.http
 /build/
 dev.db
-/prisma/migrations/
 src/generated
 routes.ts
 src/swagger/swagger.json
